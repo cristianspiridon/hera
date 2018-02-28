@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeue.ttc">
+            <string>HelveticaNeue</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScanView" customModule="myHera" customModuleProvider="target"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gGm-uZ-jjU" customClass="DesignableView" customModule="myHera" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+                    <subviews>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SCAN AREA" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TiN-7t-pWH">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </textField>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="TiN-7t-pWH" secondAttribute="trailing" id="5qM-LY-Bkb"/>
+                        <constraint firstAttribute="bottom" secondItem="TiN-7t-pWH" secondAttribute="bottom" id="BDf-vL-2I1"/>
+                        <constraint firstItem="TiN-7t-pWH" firstAttribute="leading" secondItem="gGm-uZ-jjU" secondAttribute="leading" id="Gah-CJ-8Yh"/>
+                        <constraint firstItem="TiN-7t-pWH" firstAttribute="top" secondItem="gGm-uZ-jjU" secondAttribute="top" id="Vwh-aN-Wmn"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                            <color key="value" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                            <real key="value" value="1"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="18"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="gGm-uZ-jjU" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="6zy-Fx-NvY"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="gGm-uZ-jjU" secondAttribute="trailing" id="Cow-aq-6QN"/>
+                <constraint firstItem="TiN-7t-pWH" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="Gdg-ZE-Vl1"/>
+                <constraint firstItem="gGm-uZ-jjU" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="Hc7-c5-def"/>
+                <constraint firstItem="gGm-uZ-jjU" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="KRR-jy-gsA"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="39.5" y="735.5"/>
+        </view>
+    </objects>
+</document>

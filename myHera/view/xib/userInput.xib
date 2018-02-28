@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeue.ttc">
+            <string>HelveticaNeue</string>
+        </array>
+        <array key="HelveticaNeueLights.ttc">
+            <string>HelveticaNeue-Light</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UserInputView" customModule="myHera" customModuleProvider="target">
+            <connections>
+                <outlet property="borderLine" destination="esy-3I-61z" id="3dg-3p-xGp"/>
+                <outlet property="titleValue" destination="5k9-NP-6bI" id="cjc-y8-vmJ"/>
+                <outlet property="userInputLabel" destination="wSa-OD-Maf" id="RyC-vm-z3w"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enter your email " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5k9-NP-6bI">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wSa-OD-Maf">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
+                    <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="YJd-g1-2Im"/>
+                    </connections>
+                </textField>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="esy-3I-61z">
+                    <rect key="frame" x="0.0" y="49" width="375" height="1"/>
+                    <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="iln-Sd-Qdu"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="esy-3I-61z" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="AVa-JX-fAY"/>
+                <constraint firstItem="wSa-OD-Maf" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" constant="-2" id="cnO-ui-Otv"/>
+                <constraint firstItem="esy-3I-61z" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="fUy-Ny-8OQ"/>
+                <constraint firstItem="wSa-OD-Maf" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="h7d-OP-avO"/>
+                <constraint firstItem="wSa-OD-Maf" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="hGV-eS-UYH"/>
+                <constraint firstItem="wSa-OD-Maf" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="rEp-Cr-7Bz"/>
+                <constraint firstAttribute="trailing" secondItem="esy-3I-61z" secondAttribute="trailing" id="udD-YH-Y0b"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="62.5" y="54"/>
+        </view>
+    </objects>
+</document>

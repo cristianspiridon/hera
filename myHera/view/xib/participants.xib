@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeueLights.ttc">
+            <string>HelveticaNeue-Light</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Participants" customModule="myHera" customModuleProvider="target">
+            <connections>
+                <outlet property="firstPicture" destination="JXJ-HT-Dd7" id="p6o-CH-MuL"/>
+                <outlet property="label" destination="KCA-Sg-sL1" id="WHN-nx-N5L"/>
+                <outlet property="secondPicture" destination="4Cs-uR-6Xj" id="vm1-76-5MQ"/>
+                <outlet property="thirdPicture" destination="G5R-HS-xpK" id="Gsf-Kw-O4U"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 participant in the event" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCA-Sg-sL1">
+                    <rect key="frame" x="115" y="15" width="240" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="jiL-Rm-kUR"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zV6-KL-r8Q">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                    <connections>
+                        <action selector="onAction:" destination="-1" eventType="touchUpInside" id="Eq8-ag-zA5"/>
+                    </connections>
+                </button>
+                <stackView opaque="NO" contentMode="scaleToFill" spacing="-15" translatesAutoresizingMaskIntoConstraints="NO" id="vYl-yH-mgH">
+                    <rect key="frame" x="20" y="7.5" width="75" height="35"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JXJ-HT-Dd7" customClass="RoundedPicture" customModule="myHera" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="35" id="1iX-00-q1S"/>
+                                <constraint firstAttribute="height" constant="35" id="6YZ-e6-QCo"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="nibName" value="roundedProfile"/>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Cs-uR-6Xj" customClass="RoundedPicture" customModule="myHera" customModuleProvider="target">
+                            <rect key="frame" x="20" y="0.0" width="35" height="35"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="35" id="mYG-Jl-NrF"/>
+                                <constraint firstAttribute="height" constant="35" id="uvk-fa-xMV"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="nibName" value="roundedProfile"/>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G5R-HS-xpK" customClass="RoundedPicture" customModule="myHera" customModuleProvider="target">
+                            <rect key="frame" x="40" y="0.0" width="35" height="35"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="35" id="BbD-bg-y5J"/>
+                                <constraint firstAttribute="width" constant="35" id="rqc-wJ-UV4"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="nibName" value="roundedProfile"/>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="KCA-Sg-sL1" secondAttribute="trailing" constant="20" id="525-rA-ocH"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="zV6-KL-r8Q" secondAttribute="bottom" id="F5R-yp-JFs"/>
+                <constraint firstItem="KCA-Sg-sL1" firstAttribute="leading" secondItem="vYl-yH-mgH" secondAttribute="trailing" constant="20" id="Xmd-9A-hSt"/>
+                <constraint firstItem="vYl-yH-mgH" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="hMM-nk-hq7"/>
+                <constraint firstItem="zV6-KL-r8Q" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="hSe-O8-VEw"/>
+                <constraint firstItem="KCA-Sg-sL1" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="plS-uX-SzG"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="zV6-KL-r8Q" secondAttribute="trailing" id="rnA-sI-whW"/>
+                <constraint firstItem="vYl-yH-mgH" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="sMM-eD-UAb"/>
+                <constraint firstItem="zV6-KL-r8Q" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="shR-LK-Kts"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="53.5" y="54"/>
+        </view>
+    </objects>
+</document>
