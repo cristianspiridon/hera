@@ -27,7 +27,7 @@ extension ProductViewCellTableViewCell:ProductBankDelegate {
         
         if proxyModel?.times != 1 {
             
-             quantity.text = "x \((proxyModel?.times!)!) @ \(convertToCurrency(value: (barcode?.price)!))"
+            quantity.text = "x \((proxyModel?.times)!) @ \(convertToCurrency(value: (barcode?.price)!))"
         }
         
        
@@ -81,15 +81,15 @@ class ProductViewCellTableViewCell: UITableViewCell {
         labelSKU.text = model.sku
         
         barcode = productsBank?.getProductBy(sku: (proxyModel?.sku)!)
-        labelPrice.text = convertToCurrency(value: ((barcode?.price)! * Double(model.times!)))
+        labelPrice.text = convertToCurrency(value: ((barcode?.price)! * Double(model.times)))
         onProductTitleChange(title: (barcode?.title)!)
         
         
-        if model.times! != 1 {
+        if model.times != 1 {
         
             let price = convertToCurrency(value: (barcode?.price)!)
             
-            quantity.text = "x \(model.times!) @ \(price)"
+            quantity.text = "x \(model.times) @ \(price)"
             priceCenterY.constant = -9
             
         } else {

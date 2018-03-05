@@ -10,7 +10,7 @@ import UIKit
 import InteractiveSideMenu
 
 extension EventDashboardViewController: NavigationDelegate, NavigationDelegateOptionalEdit, SideMenuItemContent {
-
+    
     func onDismiss() {
         
         self.dismiss(animated: true)
@@ -25,7 +25,7 @@ extension EventDashboardViewController: NavigationDelegate, NavigationDelegateOp
 }
 
 extension EventDashboardViewController:FeedBankModelDelegate {
-   
+    
     func onUpdate() {
         
         navController.labelTitle.text = currentFeed?.name
@@ -51,7 +51,7 @@ extension EventDashboardViewController:MessagesBankDelegate {
 }
 
 extension EventDashboardViewController: ParticipantsViewDelegate {
-   
+    
     func onSelect() {
         self.performSegue(withIdentifier: "showParticipants", sender: self)
     }
@@ -97,10 +97,19 @@ extension EventDashboardViewController:UITableViewDelegate, UITableViewDataSourc
             
             let cell:RegionTableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "regionCell") as! RegionTableViewCell
             
-            cell.setData(region: (currentRList?.regions[indexPath.row])!)
-            cell.delegate = self
-            
             return cell
+        }
+        
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        
+        if let regCell:RegionTableViewCell = cell as? RegionTableViewCell {
+            
+            regCell.setData(region: (currentRList?.regions[indexPath.row])!)
+            regCell.delegate = self
+            
         }
         
     }
@@ -118,12 +127,12 @@ extension EventDashboardViewController:UITableViewDelegate, UITableViewDataSourc
                 return true
                 
             } else {
-           
+                
                 
                 return false
                 
             }
-           
+            
         }
         
     }
@@ -154,9 +163,9 @@ extension EventDashboardViewController:RegionListDelegate {
     
     func onRegionChildDeleted(index: Int) {
         
-          self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: UITableViewRowAnimation.automatic)
+        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: UITableViewRowAnimation.automatic)
         
-         updateScrollHeight()
+        updateScrollHeight()
     }
     
 }
@@ -174,9 +183,10 @@ extension EventDashboardViewController:RegionTableCellDelegate {
 }
 
 var currentSelectedFeed:FeedBankModel?
+var currentRList:RegionsList?
 
 class EventDashboardViewController: HeraViewController {
-
+    
     @IBOutlet var navController: NavigationView!
     @IBOutlet var mainImage: UIImageView!
     @IBOutlet var numOfMessages: UILabel!
@@ -188,7 +198,6 @@ class EventDashboardViewController: HeraViewController {
     @IBOutlet var separatorLine: UIView!
     
     var currentFeed:FeedBankModel?
-    var currentRList:RegionsList?
     
     var selectedRegion:RegionBankModel?
     
@@ -199,7 +208,7 @@ class EventDashboardViewController: HeraViewController {
     
     @IBAction func showDiscussions(_ sender: Any) {
         
-         self.performSegue(withIdentifier: "showDiscussions", sender: self)
+        self.performSegue(withIdentifier: "showDiscussions", sender: self)
         
     }
     @IBAction func onAddRegion(_ sender: Any) {
@@ -234,19 +243,18 @@ class EventDashboardViewController: HeraViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         currentSelectedFeed = currentFeed
         currentFeed?.delegates.append(self)
         
-        
-        
+        productsBank?.loadEntireBarcodeDataOffline()
         
         navController.labelTitle.text = currentFeed?.name
         
         navController.showCloseButton(sender: self)
         
         if (currentSelectedFeed?.hasAdminRoles())! {
-     
+            
             navController.showEditButton(sender: self)
             
             
@@ -257,7 +265,7 @@ class EventDashboardViewController: HeraViewController {
             navController.showProfilePictureFor(userID: (userModel?.uid)!)
             
         }
-    
+        
         participantsView.delegate = self
         participantsView.setup(feed: currentFeed!)
         
@@ -280,15 +288,15 @@ class EventDashboardViewController: HeraViewController {
         
         messagesObject = messagesBank?.getMessagesFor(stocktakeId: (currentFeed?.key!)!)
         messagesObject?.delegates.append(self)
-
+        
         onChildAdded()
         
         stocktakeStats.setFeed(feed: currentFeed!)
         
- 
+        
         // Do any additional setup after loading the view.
     }
-
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -318,16 +326,17 @@ class EventDashboardViewController: HeraViewController {
         if segue.identifier == "showRegion" {
             
             let vc:RegionViewController = segue.destination as! RegionViewController
-             vc.currentRList = currentRList
-             vc.regionModel = selectedRegion
+            vc.currentRList = currentRList
+            vc.regionModel = selectedRegion
         }
         
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-   
+    
 }
+

@@ -32,7 +32,7 @@ class AreaListManager: NSObject {
     var handleChange:  UInt = 0
     
     init(key:String) {
-    
+        
         super.init()
         self.key = key
         ref = Database.database().reference()
@@ -48,12 +48,12 @@ class AreaListManager: NSObject {
         
         print("Get area list by \(key!)")
         
-        areaListRef = ref?.child("areas").child((currentSelectedFeed?.key)!).child((key!))
+        areaListRef = ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("areas").child((key!))
         
         handleAdded = (areaListRef?.observe(.childAdded, with: { (snapshot) in
             
             let newArea:AreaBankModel = AreaBankModel(key: snapshot.key, value: snapshot.value as! [String : Any])
-         
+            
             self.areas.insert(newArea, at: 0)
             
             for delegate in self.delegates {
@@ -104,7 +104,7 @@ class AreaListManager: NSObject {
         
     }
     
-
+    
     
     func addNewArea(areaCode:String) {
         
@@ -112,13 +112,13 @@ class AreaListManager: NSObject {
         
         
         let postArea   = ["uid": userModel?.uid!,
-                            "stock-value": 0,
-                            "quantity"  : 0,
-                            "duration": 0,
-                            "progress": "in progress"] as [String : Any]
+                          "stock-value": 0,
+                          "quantity"  : 0,
+                          "duration": 0,
+                          "progress": "in progress"] as [String : Any]
         
         
-        let childUpdates = ["/areas/\((currentSelectedFeed?.key!)!)/\((currentSelectedRegion?.key)!)/\(areaCode)": postArea]
+        let childUpdates = ["/\((currentSelectedFeed?.locationId)!)/\((currentSelectedFeed?.key)!)/areas/\((currentSelectedRegion?.key)!)/\(areaCode)": postArea]
         
         
         
@@ -132,12 +132,12 @@ class AreaListManager: NSObject {
             } else {
                 
                 SVProgressHUD.showSuccess(withStatus: "Area created")
-                    
-                }
                 
             }
             
         }
+        
+    }
     
     
     func deleteArea(at:Int){
@@ -148,7 +148,7 @@ class AreaListManager: NSObject {
     func deleteArea(area:AreaBankModel) {
         
         if area.progress == "completed" {
-         
+            
             currentSelectedRegion?.substractAreaDetails(areaModel: area)
             currentSelectedFeed?.substractAreaDetails(areaModel: area)
         }
@@ -156,9 +156,10 @@ class AreaListManager: NSObject {
         area.removeFootPrint()
         
         areaListRef?.child(area.key!).removeValue()
-        ref?.child("area_contents").child((currentSelectedFeed?.key)!).child((currentSelectedRegion?.key!)!).child(area.key!).removeValue()
+        
+        ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("area_contents").child((currentSelectedRegion?.key!)!).child(area.key!).removeValue()
         
     }
-        
+    
 }
 

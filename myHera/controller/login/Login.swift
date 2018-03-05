@@ -46,7 +46,7 @@ struct LoginConstant {
 extension Login:UserModelDelegate {
     
     func onBusinessModel() {
-     
+        
         self.performSegue(withIdentifier: "startApp", sender: self)
         
     }
@@ -54,7 +54,7 @@ extension Login:UserModelDelegate {
 }
 
 class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
-
+    
     @IBOutlet var centerViewConstrain: NSLayoutConstraint!
     @IBOutlet var emailInput: UserInputView!
     @IBOutlet var passwordInput: UserInputView!
@@ -72,9 +72,9 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         
         initLogin()
     }
-
-    func initLogin() {
     
+    func initLogin() {
+        
         titleValue.labelTitle.text = LoginConstant.loginTitle
         titleValue.labelSubtitle.text = LoginConstant.loginSubtitle
         actionButton.setTitle(LoginConstant.loginAction, for: .normal)
@@ -106,8 +106,8 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         
     }
     
-   func initClasses() {
-    
+    func initClasses() {
+        
         userBank  = UserBank()
         messagesBank = MessagesBank()
         feedBank = FeedBank()
@@ -117,17 +117,15 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         areasBank  = AreasBank()
         productsBank = ProductBank()
         participantsBank = ParticipantsBank()
-    
-        productsBank?.loadEntireBarcodeDataOffline()
-    
+        
         userModel = UserModel(uid: (Auth.auth().currentUser?.uid)!)
         userModel?.delegates.append(self)
-    
+        
     }
     
     
     func onCreated() {
-          //  self.dismiss(animated: false)
+        //  self.dismiss(animated: false)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -143,13 +141,13 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         
     }
     
- 
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
-          if textField == emailInput.userInputLabel {
+        if textField == emailInput.userInputLabel {
             emailInput.textFieldDidBeginEditing(textField)
-        
-          } else {
+            
+        } else {
             passwordInput.textFieldDidBeginEditing(textField)
         }
     }
@@ -168,7 +166,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         if textField == emailInput.userInputLabel {
-        
+            
             
             if isForgotPage {
                 
@@ -234,7 +232,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
             gotoLogin()
             
         } else {
-        
+            
             gotoForgot()
         }
         
@@ -268,9 +266,9 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
     
     func animateToPage(midPointX:Double, newLabelButtonValue:String, newButtonValue:String, newTitle:String, newSubtitle:String, isPasswordVisible:Bool) {
         
-       
+        
         self.passwordInput.isUserInteractionEnabled  = false
-       
+        
         
         
         
@@ -323,7 +321,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         
         
     }
-
+    
     
     @IBAction func onGetStarted(_ sender: Any) {
         
@@ -376,7 +374,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
                 
                 userModel = UserModel(uid: (Auth.auth().currentUser?.uid)!)
                 userModel?.delegates.append(self)
-  
+                
                 
             }
             
@@ -403,7 +401,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
             if error != nil {
                 
                 SVProgressHUD.showError(withStatus: error?.localizedDescription)
-              
+                
                 self.emailInput.userInputLabel.becomeFirstResponder()
                 
             } else {
@@ -412,7 +410,7 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
                 
                 self.passwordInput.userInputLabel.text = ""
                 self.gotoLogin()
-
+                
             }
             
             self.enableAllButtons()
@@ -423,13 +421,13 @@ class Login: HeraViewController, UITextFieldDelegate, CreateNewAccountDelegate {
         
     }
     
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    
 }
 

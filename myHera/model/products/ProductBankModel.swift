@@ -30,7 +30,7 @@ class ProductBankModel: NSObject {
     
     var sku:String?
     var title:String?
-    var price:Double?
+    var price:Double = 0
     
     var delegates:[ProductBankDelegate] = [ProductBankDelegate]()
     
@@ -53,7 +53,7 @@ class ProductBankModel: NSObject {
             exists = true
             
             title  = dict?["title"] as? String
-            price  = dict?["price"] as? Double
+            price  = (dict?["price"] as? Double)!
             
         }
         

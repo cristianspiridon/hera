@@ -33,6 +33,11 @@ class ProductBank: NSObject {
     
     func loadEntireBarcodeDataOffline() {
         
+        print("Load Barcodes Data")
+        
+        barcodesDict = [String:Any]()
+        addedDict    = [String:Any]()
+        
         loadInitialBarcodeList()
         loadAddedBarcodes()
         
@@ -40,16 +45,17 @@ class ProductBank: NSObject {
     
     func loadAddedBarcodes() {
         
-        let locID = "-L2bqdQjbz4uw91PRKYc"
+        let locID  = currentSelectedFeed?.locationId
+        let feedID = currentSelectedFeed?.key
         
         ref = Database.database().reference()
-      
-        ref?.child(locID).child("addedBarcodes").observe(.value, with: { (snapshot) in
+        
+        ref?.child(locID!).child(feedID!).child("addedBarcodes").observe(.value, with: { (snapshot) in
             
             if snapshot.exists() {
-             
+                
                 if let temp = snapshot.value as? [String: Any] {
-                 
+                    
                     self.addedDict = temp
                     
                 }
@@ -61,21 +67,20 @@ class ProductBank: NSObject {
     
     func loadInitialBarcodeList() {
         
-        let locID = "-L2bqdQjbz4uw91PRKYc"
+        let locID  = currentSelectedFeed?.locationId
+        let feedID = currentSelectedFeed?.key
+        
         
         ref = Database.database().reference()
-        ref?.child(locID).child("barcodes").observeSingleEvent(of: .value, with: { (snapshot) in
-       
+        ref?.child(locID!).child(feedID!).child("barcodes").observeSingleEvent(of: .value, with: { (snapshot) in
+            
             if snapshot.exists() {
                 
-            
-            print("We have Barcodes Database \(snapshot.childrenCount)")
-            
-            if let dict = snapshot.value as? [String:Any] {
-                
-                self.barcodesDict = dict
-                
-            }
+                if let dict = snapshot.value as? [String:Any] {
+                    
+                    self.barcodesDict = dict
+                    
+                }
                 
             }
             
@@ -84,8 +89,6 @@ class ProductBank: NSObject {
     }
     
     func getProductBy(sku:String) -> ProductBankModel? {
-        
-        print("Search for product \(sku)")
         
         let i = products.index { (product) -> Bool in
             
@@ -98,12 +101,8 @@ class ProductBank: NSObject {
             
         } else {
             
-            print("database from memory")
-            
             var concatenated = barcodesDict
             concatenated.update(other: addedDict)
-            
-            print("barcodesDict:\(barcodesDict.count) addedDict:\(addedDict.count) concatenated:\(concatenated.count)")
             
             if let skuData = concatenated[sku] as? [String:Any] {
                 
@@ -114,13 +113,9 @@ class ProductBank: NSObject {
                 
             }  else {
                 
-                print("database create new one")
-            
                 let newProduct = ProductBankModel(key:sku, dict:nil)
                 products.append(newProduct)
-                return newProduct 
-                
-                return nil
+                return newProduct
                 
             }
             
@@ -142,5 +137,5 @@ class ProductBank: NSObject {
     }
     
     
-
+    
 }

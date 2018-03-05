@@ -9,9 +9,10 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import SVProgressHUD
 
 extension TestDatabaseViewController: NavigationDelegate {
-
+    
     func onDismiss() {
         
         self.dismiss(animated: true)
@@ -27,7 +28,7 @@ class TestDatabaseViewController: UIViewController {
     
     @IBOutlet var textView: UITextView!
     
-    var currentTestID:Int = 0
+    var currentTestID:Int = -1
     
     var areaFootPrint:[String:[String:[String:[String:Any]]]]?
     var areaContents :[String:[String:[String:[String:Any]]]]?
@@ -38,42 +39,174 @@ class TestDatabaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navController.labelTitle.text = "Hard Test Database"
+        navController.labelTitle.text = "Database Validation"
         
-       // navController.showExportPDF(sender: self)
+        // navController.showExportPDF(sender: self)
         navController.showCloseButton(sender: self)
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     @IBAction func onTestStart(_ sender: Any) {
         
-       nextTest()
-
+        nextTest()
+        
     }
     
     
     func nextTest() {
         
+        
+        currentTestID += 1
+        
+        print("Next test \(currentTestID)  ")
+        
         dispatchMessage(msg: "Running Next Test ID: \(currentTestID)")
         
         switch currentTestID {
+            
         case 0: loadAreaFootPrint(); break
-            
         case 1: loadAreaContents(); break
-            
         case 2: loadAreaDetailsAndCheckForErrors(); break
-        
-        case 3: dispatchMessage(msg: "Start next when ready"); break
+        case 3: loadRegionStats();  break
+        case 4: loadStocktakeStats(); break
+        case 5:
             
-        case 4: loadRegionStats();  break
+            dispatchMessage(msg: "Validation complete!")
+            SVProgressHUD.showSuccess(withStatus: "Test complete! Some background updates may still run.")
             
         default:
             print("No more test")
         }
         
-        currentTestID += 1
         
+    }
+    
+    func loadStocktakeStats() {
+        
+        self.dispatchMessage(msg: "Start Stocktake Level Test")
+        
+        var stockValue:Double = 0
+        var stockTakeDuration:Int = 0
+        var completedAreas = 0
+        var totalAreas = 0
+        var stockQuantity = 0
+        
+        
+        for region in (currentRList?.regions)! {
+            
+            stockQuantity     += region.quantity!
+            stockValue        += region.totalValue!
+            stockTakeDuration += region.duration!
+            completedAreas    += region.completedAreas!
+            totalAreas        += region.numberOfAreas()
+            
+        }
+        
+        var isPassingTest = true
+        
+        self.dispatchMessage(msg: "Stcktake Expected vs Found")
+        
+        self.dispatchMessage(msg: "stockQuantity \(stockQuantity) \((currentSelectedFeed?.quantity)!)")
+        self.dispatchMessage(msg: "stockValue \(stockValue) \((currentSelectedFeed?.totalValue)!)")
+        self.dispatchMessage(msg: "stockTakeDuration \(stockTakeDuration) \((currentSelectedFeed?.duration)!)")
+        self.dispatchMessage(msg: "completedAreas \(completedAreas) \((currentSelectedFeed?.completedAreas)!)")
+        self.dispatchMessage(msg: "totalAreas \(totalAreas) \((currentSelectedFeed?.totalAreas)!)")
+        
+        
+        isPassingTest = isPassingTest && stockTakeDuration == currentSelectedFeed?.duration
+        isPassingTest = isPassingTest && stockValue == currentSelectedFeed?.totalValue
+        isPassingTest = isPassingTest && stockQuantity == currentSelectedFeed?.quantity
+        isPassingTest = isPassingTest && completedAreas == currentSelectedFeed?.completedAreas
+        isPassingTest = isPassingTest && totalAreas == currentSelectedFeed?.totalAreas
+        
+        let tempPerc:Double = Double(completedAreas) / Double(totalAreas)
+        
+        isPassingTest = isPassingTest && tempPerc == currentSelectedFeed?.progress
+        
+        let testStr = isPassingTest == true ? "passed" : "failed"
+        
+        self.dispatchMessage(msg: "Stocktake level test \(testStr)")
+        
+        if isPassingTest == false {
+            
+            // create FootPrintFromAllAreas
+            
+            var newFootPrint:[String:Any]  = [String:Any]()
+            
+            for (region, value) in areaFootPrint! {
+                
+                print("Foot print \(region)")
+                
+                if  let areaList = value as? [String:[String:Any]] {
+                    
+                    for (key, value) in areaList {
+                        
+                        if let tempFootPrint = value["footPrint"] as? [String:Any] {
+                            
+                            print(tempFootPrint)
+                            
+                            for (sku, qty) in tempFootPrint {
+                                
+                                let newQty:Int = qty as! Int
+                                
+                                if let tempQty = newFootPrint[sku] as? Int {
+                                    
+                                    newFootPrint[sku] = tempQty + newQty
+                                    
+                                } else {
+                                    
+                                    newFootPrint[sku] = newQty
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            
+            let stocktakeFootPrint = Database.database().reference().child("stocktake_footPrint").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("footPrint").setValue(newFootPrint, withCompletionBlock: { (error, ref) in
+                
+                if error != nil {
+                    
+                    self.self.dispatchMessage(msg: "Stocktake footPrint update error")
+                    
+                } else {
+                    
+                    self.dispatchMessage(msg: "Stocktake FootPrint Updated with success")
+                }
+                
+            })
+            
+            let stockQtyRef:DatabaseReference = Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("quantity")
+            stockQtyRef.setValue(stockQuantity)
+            
+            let stockValueRef:DatabaseReference = Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("stock-value")
+            stockValueRef.setValue(stockValue)
+            
+            let stockADuration:DatabaseReference =  Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("duration")
+            stockADuration.setValue(stockTakeDuration)
+            
+            let stockAreaCompleted:DatabaseReference =  Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("completed-areas")
+            stockAreaCompleted.setValue(completedAreas)
+            
+            let stockTotalAreasRef:DatabaseReference =  Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("total-areas")
+            stockTotalAreasRef.setValue(totalAreas)
+            
+            let regionTotalProgress:DatabaseReference =  Database.database().reference().child("stocktakes").child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("progress")
+            regionTotalProgress.setValue(tempPerc)
+            
+            dispatchMessage(msg: "Stocktake stats updated")
+            
+        }
+        
+        
+        nextTest()
     }
     
     func loadRegionStats() {
@@ -109,7 +242,7 @@ class TestDatabaseViewController: UIViewController {
                         var Temp_sValue:Double      = 0
                         
                         var newFootPrint:[String:Any] = [String:Any]()
- 
+                        
                         
                         for (area, value) in self.areaStats![region]! {
                             
@@ -143,7 +276,7 @@ class TestDatabaseViewController: UIViewController {
                                 }
                                 
                             }
-
+                            
                             
                         }
                         
@@ -199,7 +332,7 @@ class TestDatabaseViewController: UIViewController {
                             
                             let regionProgress:DatabaseReference = Database.database().reference().child("regions").child((currentSelectedFeed?.key)!).child(region).child("completed-areas")
                             regionProgress.setValue(Temp_numOFCompleted)
-                          
+                            
                             let newProgress = Double(Temp_numOFCompleted) / totalAreas
                             
                             
@@ -215,6 +348,8 @@ class TestDatabaseViewController: UIViewController {
                         }
                     }
                     
+                    self.dispatchMessage(msg: "Region level validation complete!")
+                    self.nextTest()
                 }
                 
             }
@@ -223,13 +358,13 @@ class TestDatabaseViewController: UIViewController {
         
     }
     
-   
+    
     
     func loadAreaFootPrint() {
         
-        dispatchMessage(msg: "Call Firebase for Area FootPrint Value")
+        dispatchMessage(msg: "Download Area Foot Print")
         
-        let areaFootPrintRef = Database.database().reference().child("areas_footPrint").child((currentSelectedFeed?.key)!)
+        let areaFootPrintRef = Database.database().reference().child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("areas_footPrint")
         
         areaFootPrintRef.observeSingleEvent(of: .value) { (snapshot) in
             
@@ -242,8 +377,11 @@ class TestDatabaseViewController: UIViewController {
                     self.dispatchMessage(msg: "Area foot print loaded with success")
                     self.nextTest()
                     
-                    
                 }
+                
+            } else {
+                
+                self.dispatchMessage(msg: "No foot print found for area")
                 
             }
             
@@ -253,9 +391,9 @@ class TestDatabaseViewController: UIViewController {
     
     func loadAreaContents() {
         
-        dispatchMessage(msg: "Call Firebase for Area Contents Value")
-       
-        let areaContetsPrintRef = Database.database().reference().child("area_contents").child((currentSelectedFeed?.key)!)
+        dispatchMessage(msg: "Download Area Contents")
+        
+        let areaContetsPrintRef = Database.database().reference().child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("area_contents")
         
         areaContetsPrintRef.observeSingleEvent(of: .value) { (snapshot) in
             
@@ -276,7 +414,7 @@ class TestDatabaseViewController: UIViewController {
         }
         
     }
-
+    
     func convertToCurrency(value:Double) -> String {
         
         
@@ -305,15 +443,15 @@ class TestDatabaseViewController: UIViewController {
     }
     
     func loadAreaDetailsAndCheckForErrors() {
-       
-        dispatchMessage(msg: "Observe Area List Value for Firbase")
+        
+        dispatchMessage(msg: "Download Area List Status")
         
         
-        let areaRef = Database.database().reference().child("areas").child((currentSelectedFeed?.key)!)
+        let areaRef = Database.database().reference().child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("areas")
         
         areaRef.observeSingleEvent(of: .value) { (snapshot) in
             
-            self.dispatchMessage(msg: "Firebase response has arrived")
+            self.dispatchMessage(msg: "Area list has loaded with success")
             
             if snapshot.exists() {
                 
@@ -323,13 +461,9 @@ class TestDatabaseViewController: UIViewController {
                     
                 }
                 
-                self.dispatchMessage(msg: "\(snapshot.childrenCount) regions found")
-                
                 if let regionList:[String:Any] = snapshot.value as? [String:Any] {
                     
                     for var (region, value) in regionList {
-                        
-                        self.dispatchMessage(msg: "Start checking region:\(region)")
                         
                         if let areaList:[String:Any] = value as! [String:Any] {
                             
@@ -338,17 +472,17 @@ class TestDatabaseViewController: UIViewController {
                             for (area, value) in areaList {
                                 
                                 
-                                
                                 if let areaStats:[String:Any] = value as? [String:Any] {
                                     
-                                  let quantity     = areaStats["quantity"] as! Int
-                                  let sValue         = areaStats["stock-value"] as? Double ?? 0
+                                    let quantity     = areaStats["quantity"] as! Int
+                                    let sValue         = areaStats["stock-value"] as? Double ?? 0
                                     
-                                  DispatchQueue.main.async {
                                     
                                     let testFootPrint = self.getFootPrintTestFor(area: area, region: region, expectedQ:quantity, expectedV: sValue )
                                     
-                                    }
+                                    let tempStr = testFootPrint == true ? "has passed the test" : "has failed the test"
+                                    
+                                    self.dispatchMessage(msg: "\(area) \(tempStr)")
                                     
                                 }
                                 
@@ -367,7 +501,6 @@ class TestDatabaseViewController: UIViewController {
                 
                 self.dispatchMessage(msg: "ERROR: Area List Snapshot doesn't exist! ")
                 
-                
             }
             
         }
@@ -375,7 +508,7 @@ class TestDatabaseViewController: UIViewController {
     }
     
     func getFootPrintTestFor(area:String, region:String, expectedQ:Int, expectedV:Double) -> Bool {
-       
+        
         var footPrintError:Bool = true
         var totalQ:Int = 0
         var totalV:Double = 0
@@ -384,26 +517,27 @@ class TestDatabaseViewController: UIViewController {
             
             if areaFootPrint![region]![area] != nil {
                 
-              if let footPrint:[String:Any] = (areaFootPrint![region]![area]!["footPrint"])! {
-            
-                footPrintError = false
-                
-                for (barcode, quantity) in footPrint {
+                if let footPrint:[String:Any] = (areaFootPrint![region]![area]!["footPrint"])! {
                     
-                    let tempModel = productsBank?.getProductBy(sku: barcode)
+                    footPrintError = false
                     
-                    if let price = tempModel?.price {
+                    for (barcode, quantity) in footPrint {
                         
-                        totalQ = totalQ + Int(quantity as! Int)
-                        totalV = totalV + Double(quantity as! Int) * (tempModel?.price)!
+                        let tempModel = productsBank?.getProductBy(sku: barcode)
                         
-                    } else {
-                        
-                          dispatchMessage(msg: "Error getting price for sku \(barcode)")
-                        
+                        if let price = tempModel?.price {
+                            
+                            totalQ = totalQ + Int(quantity as! Int)
+                            totalV = totalV + Double(quantity as! Int) * (tempModel?.price)!
+                            
+                        } else {
+                            
+                            print("Error getting price for \(barcode)")
+                            dispatchMessage(msg: "Error getting price for sku \(barcode)")
+                            
+                        }
                     }
                 }
-              }
             }
         }
         
@@ -414,24 +548,19 @@ class TestDatabaseViewController: UIViewController {
             
         } else {
             
-            
             footPrintError = (totalQ == expectedQ) && (abs(expectedV - totalV) < 0.1)
             
             if footPrintError == false {
-         
+                
                 dispatchMessage(msg: "\(area) test Failed \(footPrintError) Foot Print, Expected totalQ:\(totalQ) vs \(expectedQ) and totalV:\(totalV) vs \(expectedV)")
                 
-                DispatchQueue.main.async {
-               
-                    self.refactorArea(area:area, region:region)
-                    
-                }
+                self.refactorArea(area:area, region:region)
                 
             }
             
         }
-     
-        return true
+        
+        return footPrintError
         
     }
     
@@ -483,16 +612,18 @@ class TestDatabaseViewController: UIViewController {
             
             areaFootPrint![region]![area]!["footPrint"] = newFootPrint
             
-            let areaFootPrintRef = Database.database().reference().child("areas_footPrint").child((currentSelectedFeed?.key)!)
-            areaFootPrintRef.child(region).child(area).child("footPrint").setValue(newFootPrint)
+            let rootRef = Database.database().reference().child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!)
             
-            let areaTotalQ:DatabaseReference = Database.database().reference().child("areas").child((currentSelectedFeed?.key)!).child(region).child(area).child("quantity")
+            let areaFootPrintRef = rootRef.child("areas_footPrint").child(region).child(area).child("footPrint")
+            areaFootPrintRef.setValue(newFootPrint)
+            
+            let areaTotalQ:DatabaseReference = rootRef.child("areas").child(region).child(area).child("quantity")
             areaTotalQ.setValue(totalQty)
             
-            let areaTotalV:DatabaseReference = Database.database().reference().child("areas").child((currentSelectedFeed?.key)!).child(region).child(area).child("stock-value")
+            let areaTotalV:DatabaseReference = rootRef.child("areas").child(region).child(area).child("stock-value")
             areaTotalV.setValue(totalValue)
             
-            let areaStatus:DatabaseReference = Database.database().reference().child("areas").child((currentSelectedFeed?.key)!).child(region).child(area).child("progress")
+            let areaStatus:DatabaseReference = rootRef.child("areas").child(region).child(area).child("progress")
             areaStatus.setValue("completed")
             
             
@@ -501,13 +632,12 @@ class TestDatabaseViewController: UIViewController {
             areaStats![region]![area]!["progress"] = "completed"
             
             
-            
         } else {
             
             dispatchMessage(msg: "Could not refactor area:\(area)")
         }
         
-      
+        
         
         
     }
@@ -521,7 +651,8 @@ class TestDatabaseViewController: UIViewController {
         let seconds = calendar.component(.second, from: date)
         
         
-        textView.text = "[\(hour):\(minutes):\(seconds)]: \(msg)\n" + textView.text
+        textView.text = textView.text + "[\(hour):\(minutes):\(seconds)]: \(msg)\n"
     }
     
 }
+

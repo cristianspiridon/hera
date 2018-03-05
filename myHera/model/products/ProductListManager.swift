@@ -44,7 +44,7 @@ class ProductListManager: NSObject {
         self.key = key
         ref = Database.database().reference()
         
-        listRef = ref?.child("area_contents").child((currentSelectedFeed?.key)!).child((currentSelectedRegion?.key)!).child(key)
+        listRef = ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("area_contents").child((currentSelectedRegion?.key)!).child(key)
         
         setupListener()
         
@@ -75,12 +75,12 @@ class ProductListManager: NSObject {
             }
             
         }))
-
+        
         
         handleDeleted = (listRef!.observe(.childRemoved, with: { (snapshot) in
             
             if snapshot.key != "footPrint" {
-            
+                
                 let index = self.barcodes.index(where: { (barcode) -> Bool in
                     
                     return barcode.key == snapshot.key
@@ -100,7 +100,7 @@ class ProductListManager: NSObject {
                 }
                 
             }}))
-  
+        
         
     }
     
@@ -108,7 +108,7 @@ class ProductListManager: NSObject {
     func addProductToList(model:ProductBankModel, times:Int) {
         
         updateQuantity(with: times)
-        updateTotals(with: model.price! * Double(times))
+        updateTotals(with: model.price * Double(times))
         
         let newProdId = listRef?.childByAutoId().key
         
@@ -117,7 +117,7 @@ class ProductListManager: NSObject {
         listRef?.child(newProdId!).updateChildValues(postItem)
         
         model.updateQuantityWith(quantity: times, stoktake_id: (currentSelectedFeed?.key)!, regionId: (currentSelectedRegion?.key)!, areaId: (currentSelectedArea?.key)!)
-     
+        
     }
     
     func updateTotals(with:Double) {
@@ -126,7 +126,7 @@ class ProductListManager: NSObject {
         
         for barcode in barcodes {
             
-            totalValue = totalValue + (barcode.model?.price)! * Double(barcode.times!)
+            totalValue = totalValue + (barcode.model?.price)! * Double(barcode.times)
             
         }
         
@@ -140,8 +140,8 @@ class ProductListManager: NSObject {
         var totalQty:Int = with
         
         for barcode in barcodes {
-           
-            totalQty = totalQty + barcode.times!
+            
+            totalQty = totalQty + barcode.times
             
         }
         
@@ -151,23 +151,24 @@ class ProductListManager: NSObject {
     
     
     func deleteProduct(at:Int){
-      
+        
         deleteProduct(product: barcodes[at])
-    
+        
     }
     
     func deleteProduct(product:ProductProxyModel) {
-      
-        updateQuantity(with: -(product.times!))
+        
+        updateQuantity(with: -(product.times))
         
         let prdModel = productsBank?.getProductBy(sku: product.sku!)
         let price = prdModel?.price
         
-        updateTotals(with: -(price! * Double(product.times!)))
+        updateTotals(with: -(price! * Double(product.times)))
         
         listRef?.child(product.key!).removeValue()
         
-        prdModel?.updateQuantityWith(quantity:  -(product.times!), stoktake_id: (currentSelectedFeed?.key)!, regionId: (currentSelectedRegion?.key)!, areaId: (currentSelectedArea?.key)!)
+        prdModel?.updateQuantityWith(quantity:  -(product.times), stoktake_id: (currentSelectedFeed?.key)!, regionId: (currentSelectedRegion?.key)!, areaId: (currentSelectedArea?.key)!)
         
     }
 }
+
