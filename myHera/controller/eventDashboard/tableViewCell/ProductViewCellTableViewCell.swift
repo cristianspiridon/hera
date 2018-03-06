@@ -81,7 +81,7 @@ class ProductViewCellTableViewCell: UITableViewCell {
         labelSKU.text = model.sku
         
         barcode = productsBank?.getProductBy(sku: (proxyModel?.sku)!)
-        labelPrice.text = convertToCurrency(value: ((barcode?.price)! * Double(model.times)))
+        labelPrice.text = convertToCurrency(value: ((barcode?.price)! * Double(model.times!)))
         onProductTitleChange(title: (barcode?.title)!)
         
         

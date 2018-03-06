@@ -13,7 +13,7 @@ import Firebase
 
 
 extension DashboardViewController:FeedCellDelegate {
-   
+    
     func showDiscussionsFor(feed: FeedBankModel) {
         
         currentSelectedFeed = feed
@@ -23,8 +23,8 @@ extension DashboardViewController:FeedCellDelegate {
 }
 
 extension DashboardViewController: NavigationDelegateOptionalMenu, NavigationDelegateOptionalAdd, SideMenuItemContent {
-
- 
+    
+    
     func onAdd() {
         
         self.performSegue(withIdentifier: "AddStocktake", sender: self)
@@ -65,22 +65,32 @@ extension DashboardViewController:UITableViewDelegate, UITableViewDataSource {
         
         let cell:EventFeedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SimpleEventCell") as! EventFeedTableViewCell
         
-        let maskLayer = CAShapeLayer()
-        let bounds = cell.bounds
-        maskLayer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 7.5, width: bounds.width, height: bounds.height-15), cornerRadius: 0).cgPath
-        cell.layer.mask = maskLayer
         
-        cell.delegate = self
-        cell.setData(feed: (feed?.feeds[indexPath.row])!)
         
         return cell
+        
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if let feedCell:EventFeedTableViewCell  = cell as? EventFeedTableViewCell {
+            
+            let maskLayer = CAShapeLayer()
+            let bounds = cell.bounds
+            maskLayer.path = UIBezierPath(roundedRect: CGRect(x: 7.5, y: 7.5, width: bounds.width - 15, height: bounds.height-15), cornerRadius: 15).cgPath
+            feedCell.layer.mask = maskLayer
+            
+            feedCell.delegate = self
+            feedCell.setData(feed: (feed?.feeds[indexPath.row])!)
+            
+        }
         
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         
         if feed?.feeds[indexPath.row].uid == userModel?.uid {
-         
+            
             return true
             
         } else {
@@ -104,7 +114,7 @@ extension DashboardViewController:UITableViewDelegate, UITableViewDataSource {
             
             if feed?.feeds[indexPath.row].uid == userModel?.uid {
                 
-            
+                
                 feed?.deleteFeedAt(index: indexPath.row)
                 
                 
@@ -138,7 +148,7 @@ extension DashboardViewController: FeedBankObjectDelegate {
 
 class DashboardViewController: HeraViewController {
     
-
+    
     @IBOutlet var navController: NavigationView!
     @IBOutlet var tableView: UITableView!
     
@@ -149,9 +159,9 @@ class DashboardViewController: HeraViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         navController.labelTitle.text = "Feed"
-    
+        
         navController.showMenuButton(sender: self)
         navController.showAddButton(sender: self)
         
@@ -177,12 +187,13 @@ class DashboardViewController: HeraViewController {
         }
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
-
+    
+    
 }
+

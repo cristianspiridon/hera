@@ -108,7 +108,7 @@ class ProductListManager: NSObject {
     func addProductToList(model:ProductBankModel, times:Int) {
         
         updateQuantity(with: times)
-        updateTotals(with: model.price * Double(times))
+        updateTotals(with: model.price! * Double(times))
         
         let newProdId = listRef?.childByAutoId().key
         
@@ -126,7 +126,7 @@ class ProductListManager: NSObject {
         
         for barcode in barcodes {
             
-            totalValue = totalValue + (barcode.model?.price)! * Double(barcode.times)
+            totalValue = totalValue + (barcode.model?.price)! * Double(barcode.times!)
             
         }
         
@@ -141,7 +141,7 @@ class ProductListManager: NSObject {
         
         for barcode in barcodes {
             
-            totalQty = totalQty + barcode.times
+            totalQty = totalQty + barcode.times!
             
         }
         
@@ -158,16 +158,16 @@ class ProductListManager: NSObject {
     
     func deleteProduct(product:ProductProxyModel) {
         
-        updateQuantity(with: -(product.times))
+        updateQuantity(with: -(product.times!))
         
         let prdModel = productsBank?.getProductBy(sku: product.sku!)
         let price = prdModel?.price
         
-        updateTotals(with: -(price! * Double(product.times)))
+        updateTotals(with: -(price! * Double(product.times!)))
         
         listRef?.child(product.key!).removeValue()
         
-        prdModel?.updateQuantityWith(quantity:  -(product.times), stoktake_id: (currentSelectedFeed?.key)!, regionId: (currentSelectedRegion?.key)!, areaId: (currentSelectedArea?.key)!)
+        prdModel?.updateQuantityWith(quantity:  -(product.times!), stoktake_id: (currentSelectedFeed?.key)!, regionId: (currentSelectedRegion?.key)!, areaId: (currentSelectedArea?.key)!)
         
     }
 }

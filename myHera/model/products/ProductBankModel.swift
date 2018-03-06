@@ -30,7 +30,7 @@ class ProductBankModel: NSObject {
     
     var sku:String?
     var title:String?
-    var price:Double = 0
+    var price:Double?
     
     var delegates:[ProductBankDelegate] = [ProductBankDelegate]()
     
@@ -38,7 +38,7 @@ class ProductBankModel: NSObject {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-       
+        
     }
     
     
@@ -53,12 +53,12 @@ class ProductBankModel: NSObject {
             exists = true
             
             title  = dict?["title"] as? String
-            price  = (dict?["price"] as? Double)!
+            price  = dict?["price"] as? Double
             
         }
         
     }
-
+    
     func removeDelegate(sender:ProductBankDelegate) {
         
         let i = delegates.index { (delegate) -> Bool in
@@ -78,9 +78,15 @@ class ProductBankModel: NSObject {
     
     func updateQuantityWith(quantity:Int, stoktake_id:String, regionId:String, areaId:String) {
         
-        let printRef = self.ref?.child("areas_footPrint").child(stoktake_id).child(regionId).child(areaId).child("footPrint").child(sku!)
+        print("upadate foot print for \(areaId) \(regionId) \(stoktake_id) \(quantity)")
+        
+        ref = Database.database().reference()
+        
+        let printRef = self.ref?.child((currentSelectedFeed?.locationId)!).child(stoktake_id).child("areas_footPrint").child(regionId).child(areaId).child("footPrint").child(sku!)
         
         printRef?.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            print("area foot print ref \(snapshot)")
             
             var newValue = quantity
             
@@ -131,7 +137,7 @@ class ProductBankModel: NSObject {
             newValue = max(0, newValue)
             
             if newValue != 0 {
-           
+                
                 printRef?.setValue(newValue)
                 
             } else {
@@ -139,7 +145,7 @@ class ProductBankModel: NSObject {
                 printRef?.removeValue()
             }
             
-           
+            
         })
         
         updateStockQuantity(quantity: quantity, stoktake_id: stoktake_id)
@@ -147,7 +153,7 @@ class ProductBankModel: NSObject {
     }
     
     func updateStockQuantity(quantity:Int, stoktake_id:String) {
- 
+        
         let printRef =  self.ref?.child("stocktake_footPrint").child((currentSelectedFeed?.locationId)!).child(stoktake_id).child("footPrint").child(sku!)
         
         printRef?.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -165,18 +171,19 @@ class ProductBankModel: NSObject {
             newValue = max(0, newValue)
             
             if newValue != 0 {
-          
+                
                 printRef?.setValue(newValue)
                 
             } else {
                 
-                 printRef?.removeValue()
+                printRef?.removeValue()
                 
             }
-          
+            
         })
         
     }
-   
-
+    
+    
 }
+

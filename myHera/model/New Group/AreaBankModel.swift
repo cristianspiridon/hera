@@ -32,7 +32,7 @@ class AreaBankModel: NSObject {
     var areaRef:DatabaseReference?
     
     var delegates:[AreaBankModelDelegate] = [AreaBankModelDelegate]()
-
+    
     
     init (key:String, value:[String:Any]) {
         
@@ -43,7 +43,7 @@ class AreaBankModel: NSObject {
         updateWith(value:value)
         
         ref = Database.database().reference()
-        areaRef = ref?.child("areas").child((currentSelectedFeed?.key)!).child((currentSelectedRegion?.key)!).child(key)
+        areaRef = ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("areas").child((currentSelectedRegion?.key)!).child(key)
     }
     
     func updateWith(value:[String:Any]) {
@@ -64,14 +64,14 @@ class AreaBankModel: NSObject {
     }
     
     func removeFootPrint() {
-    
+        
         print("Remove foot print new way ")
         
         let stoktake_key = currentSelectedFeed?.key
         let region_key   = currentSelectedRegion?.key
         
-        let footPrintRef:DatabaseReference = (self.ref?.child("areas_footPrint").child(stoktake_key!).child(region_key!).child(key!).child("footPrint"))!
-      
+        let footPrintRef:DatabaseReference = (self.ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!).child("areas_footPrint").child(region_key!).child(key!).child("footPrint"))!
+        
         footPrintRef.observeSingleEvent(of: .value) { (snapshot) in
             
             print(snapshot)
@@ -79,7 +79,7 @@ class AreaBankModel: NSObject {
             if snapshot.exists() {
                 
                 if let items:[String:Int] = snapshot.value as? [String:Int] {
-                 
+                    
                     for (sku,value) in items {
                         
                         
@@ -106,8 +106,6 @@ class AreaBankModel: NSObject {
     
     func update(quantity:Int) {
         
-        print("update quantity \(quantity)")
-        
         areaRef?.child("quantity").setValue(quantity)
     }
     
@@ -118,7 +116,7 @@ class AreaBankModel: NSObject {
     
     func update(duration:Int) {
         
-         areaRef?.child("duration").setValue(duration)
+        areaRef?.child("duration").setValue(duration)
     }
     
     
@@ -139,5 +137,6 @@ class AreaBankModel: NSObject {
         
     }
     
-
+    
 }
+

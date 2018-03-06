@@ -26,7 +26,7 @@ protocol RegionListDelegate {
 
 
 class RegionsList: NSObject {
-
+    
     var key:String!
     var regions:[RegionBankModel] = [RegionBankModel]()
     var ref:DatabaseReference?
@@ -120,7 +120,7 @@ class RegionsList: NSObject {
     func addNewRegion(description:String, rangeIn:String, rangeOut:String) {
         
         SVProgressHUD.show()
-   
+        
         let regionKey      = ref?.child("regions").child(self.key!).childByAutoId().key
         
         let postRegion   = ["title": description,
@@ -149,7 +149,7 @@ class RegionsList: NSObject {
             } else {
                 
                 SVProgressHUD.dismiss()
-             
+                
                 if self.delegate != nil {
                     
                     self.delegate?.onRegionCreated()
@@ -178,7 +178,7 @@ class RegionsList: NSObject {
             let newPerc   = completed / Double(rangeOut - rangeIn + 1)
             
             ref?.child("regions").child(key).child(reg.key!).child("progress").setValue(newPerc)
-
+            
             let diff = (rangeOut - rangeIn + 1) - reg.numberOfAreas()
             currentSelectedFeed?.update(totalAreasValue: diff)
             
@@ -202,7 +202,7 @@ class RegionsList: NSObject {
         
     }
     
-
+    
     func deleteRegion(at:Int){
         
         deleteRegion(reg: regions[at])
@@ -219,11 +219,15 @@ class RegionsList: NSObject {
         currentSelectedFeed?.update(completed: -(reg.completedAreas!))
         
         
+        let rootRef = ref?.child((currentSelectedFeed?.locationId)!).child((currentSelectedFeed?.key)!)
+        
         ref?.child("regions").child(key!).child(reg.key!).removeValue()
-        ref?.child("areas").child(key!).child(reg.key!).removeValue()
-        ref?.child("area_contents").child(key!).child(reg.key!).removeValue()
+        
+        rootRef?.child("areas").child(reg.key!).removeValue()
+        rootRef?.child("area_contents").child(reg.key!).removeValue()
         
     }
     
     
 }
+

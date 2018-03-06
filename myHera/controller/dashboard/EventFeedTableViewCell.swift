@@ -100,7 +100,7 @@ class EventFeedTableViewCell: UITableViewCell {
         // Initialization code
         
         
-        actionVIew.layer.cornerRadius = 10
+        actionVIew.layer.cornerRadius = 15
         actionVIew.layer.masksToBounds = true
         
         profilePicView.layer.cornerRadius = profilePicView.frame.width / 2

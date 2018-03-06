@@ -21,7 +21,7 @@ extension RegionViewController:NavigationDelegate, NavigationDelegateOptionalEdi
         self.performSegue(withIdentifier: "editRegion", sender: self)
         
     }
-   
+    
     
 }
 
@@ -40,42 +40,42 @@ extension RegionViewController:ScanLabelDelegate {
     func onScan(code: String
         , sender:ScanLabel) {
         
-            if Int(code)! >= (regionModel?.rangeIn)! {
+        if Int(code)! >= (regionModel?.rangeIn)! {
+            
+            if Int(code)! <= (regionModel?.rangeOut)! {
                 
-                if Int(code)! <= (regionModel?.rangeOut)! {
-                  
-                 //   if areaList.
+                //   if areaList.
+                
+                let i = areaList?.areas.index(where: { (area) -> Bool in
                     
-                    let i = areaList?.areas.index(where: { (area) -> Bool in
-                        
-                        return area.key == "\(code)"
-                        
-                    })
+                    return area.key == "\(code)"
                     
-                    if i != nil {
-                        
-                        //open area
-                        
-                        onAreaSelected(area: (areaList?.areas[i!])!)
-                        
-                    } else {
-                        
-                        lastAreaCodeScan = Int(code)!
-                        
-                        areaList?.addNewArea(areaCode: "\((code))")
-                        
-                    }
-                 
+                })
+                
+                if i != nil {
+                    
+                    //open area
+                    
+                    onAreaSelected(area: (areaList?.areas[i!])!)
                     
                 } else {
-                    SVProgressHUD.showError(withStatus: "Area code out of range")
+                    
+                    lastAreaCodeScan = Int(code)!
+                    
+                    areaList?.addNewArea(areaCode: "\((code))")
+                    
                 }
                 
+                
             } else {
-                 SVProgressHUD.showError(withStatus: "Area code out of range")
+                SVProgressHUD.showError(withStatus: "Area code out of range")
             }
             
+        } else {
+            SVProgressHUD.showError(withStatus: "Area code out of range")
         }
+        
+    }
     
 }
 
@@ -107,7 +107,7 @@ extension RegionViewController:AreaListDelegate {
         updateScrollHeight()
         
     }
-
+    
     
 }
 
@@ -127,7 +127,7 @@ extension RegionViewController:UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-       return 60
+        return 60
         
     }
     
@@ -135,10 +135,17 @@ extension RegionViewController:UITableViewDelegate, UITableViewDataSource {
         
         let cell:AreaTableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "areaCell") as! AreaTableViewCell
         
-        cell.setData(model: (areaList?.areas[indexPath.row])!)
-        cell.delegate = self
-        
         return cell
+        
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if let areaCell:AreaTableViewCell = cell as? AreaTableViewCell {
+            
+            areaCell.setData(model: (areaList?.areas[indexPath.row])!)
+            areaCell.delegate = self
+        }
         
     }
     
@@ -155,7 +162,7 @@ extension RegionViewController:UITableViewDelegate, UITableViewDataSource {
         
         if editingStyle == .delete {
             print("Deleted")
-
+            
             areaList?.deleteArea(at: indexPath.row)
         }
         
@@ -214,9 +221,6 @@ class RegionViewController: HeraViewController {
             
             navController.showProfilePictureFor(userID: (userModel?.uid)!)
             
-            exportView.isHidden = true
-            scanYConst.constant = -24
-            
         }
         
         regionModel?.delegates.append(self)
@@ -244,7 +248,7 @@ class RegionViewController: HeraViewController {
         if segue.identifier == "editRegion" {
             
             let vc:AddRegionViewController = segue.destination as! AddRegionViewController
-        
+            
             vc.currentRList = currentRList
             vc.setRegion(model: regionModel!)
             
@@ -259,15 +263,16 @@ class RegionViewController: HeraViewController {
         let tableH = (areaList?.areas.count)! * 60
         
         tableHeight.constant = CGFloat(tableH)
-        scrollContentHeight.constant = max((339 + tableHeight.constant - self.view.frame.height), 0)
+        scrollContentHeight.constant = max(( tableView.frame.origin.y + tableHeight.constant - self.view.frame.height), 0)
         
     }
     
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    
 }
+

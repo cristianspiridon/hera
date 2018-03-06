@@ -20,7 +20,7 @@ protocol FeedBankObjectDelegate {
 
 
 class FeedBankObject: NSObject {
-
+    
     var key:String?
     var exists = false
     var handleAdded:UInt?
@@ -91,7 +91,7 @@ class FeedBankObject: NSObject {
         
         
         for feed in feeds {
-         
+            
             if feed.locationId == locationId {
                 
                 deleteFeed(feed: feed)
@@ -105,25 +105,25 @@ class FeedBankObject: NSObject {
     
     
     func deleteFeedAt(index:Int) {
-       
+        
         deleteFeed(feed: feeds[index])
-       
+        
     }
     
     func deleteFeed(feed:FeedBankModel) {
- 
+        
         let feedKey = feed.key!
         let locationKey = feed.locationId!
         let buid = feed.locationModel?.buid
-    
-    
+        
+        
         ref?.child("business").child(buid!).child("feed").child(feedKey).removeValue()
         ref?.child("stocktakes").child(locationKey).child(feedKey).removeValue()
         ref?.child("event-messages").child(feedKey).removeValue()
-       
-        ref?.child("regions").child(feedKey).removeValue()
-        ref?.child("areas").child(feedKey).removeValue()
-         
+        
+        ref?.child(locationKey).child(feedKey).removeValue()
+        
     }
     
 }
+

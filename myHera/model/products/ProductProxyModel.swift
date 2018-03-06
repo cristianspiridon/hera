@@ -14,7 +14,7 @@ class ProductProxyModel: NSObject {
     var sku:String?
     var model:ProductBankModel?
     
-    var times:Int = 1
+    var times:Int?
     
     override func awakeFromNib() {
         
